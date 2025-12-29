@@ -1,4 +1,5 @@
 # CryptoTrade
+Modélisation & contraintes
 contraintes des tables PostgreSQL
 
 1️⃣ Table utilisateur
