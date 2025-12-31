@@ -1,268 +1,180 @@
-# CryptoTrade
-Modélisation & contraintes
-contraintes des tables PostgreSQL
-
-1️⃣ Table utilisateur
-
-| Colonne   | Contrainte                                           | Type               | Description                            |
-| --------- | ---------------------------------------------------- | ------------------ | -------------------------------------- |
-| `id_user` | PK                                                   | Clé primaire       | Identifiant unique de l’utilisateur    |
-| `email`   | CHECK `~* '^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$'` | Vérification regex | Valide le format d’adresse email       |
-| `statut`  | CHECK `IN ('actif','desactive')`                     | Vérification       | Limite le statut aux valeurs possibles |
-| `nom`     | NOT NULL                                             | Non NULL           | Obligatoire                            |
-| `email`   | UNIQUE                                               | Unicité            | Aucun doublon d’email autorisé         |
-| `id_user` | PRIMARY KEY                                          | Unique             | Identifiant unique                     |
-
-2️⃣ Table cryptomonnaie
-
-| Colonne         | Contrainte                       | Type         | Description                     |
-| --------------- | -------------------------------- | ------------ | ------------------------------- |
-| `id_crypto`     | PK                               | Clé primaire | Identifiant unique de la crypto |
-| `nom`           | UNIQUE                           | Unicité      | Nom unique de la crypto         |
-| `symbole`       | UNIQUE                           | Unicité      | Symbole unique de la crypto     |
-| `statut`        | CHECK `IN ('actif','desactive')` | Vérification | Limite le statut                |
-| `date_creation` | CHECK `<= now()`                 | Vérification | Empêche les dates futures       |
-
-3️⃣ Table paire_trading
-
-| Colonne                            | Contrainte                               | Type         | Description                      |
-| ---------------------------------- | ---------------------------------------- | ------------ | -------------------------------- |
-| `id_paire`                         | PK                                       | Clé primaire | Identifiant unique               |
-| `crypto_base` et `crypto_cotation` | CHECK `crypto_base <> crypto_cotation`   | Vérification | Base ≠ cotation                  |
-| `statut`                           | CHECK `IN ('disponible','indisponible')` | Vérification | Limite le statut                 |
-| `crypto_base, crypto_cotation`     | UNIQUE                                   | Unicité      | Une paire unique par combinaison |
-| `date_ouverture`                   | CHECK `<= now()`                         | Vérification | Pas de date future               |
-
-4️⃣ Table portefeuille
-
-| Colonne        | Contrainte             | Type                    | Description                        |
-| -------------- | ---------------------- | ----------------------- | ---------------------------------- |
-| `id_portfolio` | PK                     | Clé primaire            | Identifiant unique du portefeuille |
-| `solde_total`  | CHECK `>= 0`           | Vérification            | Solde total positif                |
-| `solde_bloque` | CHECK `>= 0`           | Vérification            | Solde bloqué positif               |
-| `solde_bloque` | CHECK `<= solde_total` | Vérification            | Bloqué ≤ total                     |
-| `date_maj`     | CHECK `<= now()`       | Vérification            | Pas de date future                 |
-| `id_user`      | FK                     | Référence utilisateur   | Intégrité référentielle            |
-| `id_crypto`    | FK                     | Référence cryptomonnaie | Intégrité référentielle            |
-
-5️⃣ Table ordre
-
-| Colonne          | Contrainte                                                               | Type                        | Description       |
-| ---------------- | ------------------------------------------------------------------------ | --------------------------- | ----------------- |
-| `id_ordre`       | PK                                                                       | Clé primaire                | Identifiant unique|
-| `type_ordre`     | CHECK `IN ('achat','vente')`                                             | Vérification                | Limite le type d’ordre                          |
-| `mode_execution` | CHECK `IN ('market','limit')`                                            | Vérification                | Limite le mode d’exécution                      |
-| `quantite`       | CHECK `>= 0`                                                             | Vérification                | Quantité non négative                           |
-| `prix`           | CHECK `(mode_execution = 'limit' AND prix>0) OR mode_execution='market'` | Vérification conditionnelle | Prix obligatoire pour limit, ignoré pour market |
-| `statut`         | CHECK `IN ('en attente','execute','annule')`                             | Vérification                | Limite le statut                                |
-| `date_creation`  | CHECK `<= now()`                                                         | Vérification                | Pas de date future                              |
-| `id_user`        | FK                                                                       | Référence utilisateur       | Intégrité référentielle                         |
-| `id_paire`       | FK                                                                       | Référence paire_trading     | Intégrité référentielle                         |
+# 🚀 CryptoTrade – PostgreSQL Advanced Optimization Project
 
-6️⃣ Table trade
+## 📌 Description du projet
 
-| Colonne          | Contrainte       | Type                    | Description             |
-| ---------------- | ---------------- | ----------------------- | ----------------------- |
-| `id_trade`       | PK               | Clé primaire            | Identifiant unique      |
-| `prix`           | CHECK `> 0`      | Vérification            | Prix positif            |
-| `quantite`       | CHECK `>= 0`     | Vérification            | Quantité positive       |
-| `date_execution` | CHECK `<= now()` | Vérification            | Pas de date future      |
-| `id_paire`       | FK               | Référence paire_trading | Intégrité référentielle |
+**CryptoTrade** est une plateforme de trading de cryptomonnaies en temps réel conçue pour gérer :
 
-7️⃣ Table prix_marche
+- 📈 Des **millions d’ordres par jour**
+- ⚡ Un **carnet d’ordres à faible latence**
+- 💼 Des **portefeuilles multi-cryptos**
+- 🧾 Un **audit trail complet** pour la conformité
+- 📊 Des **analyses de marché avancées**
+- 🚨 La **détection d’anomalies** (wash trading, spoofing, pump & dump)
 
-| Colonne         | Contrainte       | Type                    | Description             |
-| --------------- | ---------------- | ----------------------- | ----------------------- |
-| `id_prixMarche` | PK               | Clé primaire            | Identifiant unique      |
-| `prix`          | CHECK `> 0`      | Vérification            | Prix positif            |
-| `volume`        | CHECK `> 0`      | Vérification            | Volume positif          |
-| `date_maj`      | CHECK `<= now()` | Vérification            | Pas de date future      |
-| `id_paire`      | FK               | Référence paire_trading | Intégrité référentielle |
+Ce projet met l’accent sur la **performance PostgreSQL**, en limitant volontairement la base à **10 tables** afin d’optimiser chaque composant en profondeur.
 
-8️⃣ Table statistiques_marche
+---
 
-| Colonne                               | Contrainte       | Type                    | Description                                               |
-| ------------------------------------- | ---------------- | ----------------------- | --------------------------------------------------------- |
-| `id_stat_marche`                      | PK               | Clé primaire            | Identifiant unique                                        |
-| `periode`                             | CHECK `> 0`      | Vérification            | Période positive                                          |
-| `date_maj`                            | CHECK `<= now()` | Vérification            | Pas de date future                                        |
-| `(id_paire, nom_indicateur, periode)` | UNIQUE           | Unicité                 | Pas de doublons pour un indicateur d’une paire et période |
-| `id_paire`                            | FK               | Référence paire_trading | Intégrité référentielle                                   |
+## 🎯 Objectifs techniques
 
-9️⃣ Table detection_anomalie
+- Gérer un **grand volume d’ordres** avec une latence minimale
+- Accélérer les **requêtes analytiques complexes**
+- Calculer des **indicateurs financiers** (VWAP, RSI, volatilité)
+- Garantir la **cohérence des portefeuilles** malgré la concurrence
+- Détecter des **comportements suspects**
+- Mettre en place un **monitoring PostgreSQL avancé**
 
-| Colonne          | Contrainte       | Type                  | Description                 |
-| ---------------- | ---------------- | --------------------- | --------------------------- |
-| `id_anomalie`    | PK               | Clé primaire          | Identifiant unique          |
-| `type`           | NOT NULL         | Vérification          | Type d’anomalie obligatoire |
-| `date_detection` | CHECK `<= now()` | Vérification          | Pas de date future          |
-| `id_user`        | FK               | Référence utilisateur | Intégrité référentielle     |
-| `commentaire`    | NULL autorisé    | Texte libre           | Optionnel                   |
+---
 
-🔟 Table audit_trail
+## 🧱 Modélisation de la base de données
 
-| Colonne       | Contrainte                              | Type                  | Description                |
-| ------------- | --------------------------------------- | --------------------- | -------------------------- |
-| `id_audit`    | PK                                      | Clé primaire          | Identifiant unique         |
-| `table_cible` | NOT NULL                                | Vérification          | Table modifiée obligatoire |
-| `record_id`   | NOT NULL                                | Vérification          | Record modifié obligatoire |
-| `action`      | CHECK `IN ('INSERT','UPDATE','DELETE')` | Vérification          | Action cohérente           |
-| `date_action` | CHECK `<= now()`                        | Vérification          | Pas de date future         |
-| `id_user`     | FK                                      | Référence utilisateur | Intégrité référentielle    |
-| `details`     | NULL autorisé                           | Texte libre           | Optionnel                  |
+### Tables principales (10)
 
+| Table | Description |
+|-----|------------|
+| `utilisateur` | Utilisateurs de la plateforme |
+| `cryptomonnaie` | Référentiel des cryptos |
+| `paire_trading` | Paires de trading |
+| `portefeuille` | Soldes par utilisateur et crypto |
+| `ordre` | Ordres (achat / vente) |
+| `trade` | Exécutions des ordres |
+| `prix_marche` | Historique des prix |
+| `statistiques_marche` | Indicateurs calculés |
+| `detection_anomalie` | Détection de comportements suspects |
+| `audit_trail` | Audit et traçabilité |
 
-2️⃣ Partitionnement
-2.1 Objectif
+✔ Modélisation normalisée (1FN → 3FN)  
+✔ Types PostgreSQL adaptés aux fortes volumétries  
 
-Diviser les tables volumineuses (ordre, trade, audit_trail) pour améliorer :
+---
 
-Performance des requêtes (recherche, agrégation)
+## 🛠️ Implémentation PostgreSQL
 
-Gestion des données historiques (purge ou archivage plus facile)
+### 1️⃣ Création des tables
 
-2.2 Types utilisés
+- Clés primaires (`PRIMARY KEY`)
+- Contraintes métier (`CHECK`)
+- Clés étrangères (FK) lorsque compatibles avec le partitionnement
+- Gestion des contraintes sur tables partitionnées
 
-RANGE : pour les tables basées sur une date (ordre.date_creation, trade.date_execution, audit_trail.date_action)
+---
 
-Chaque partition contient une plage de dates spécifique.
-Index par table
-🧑‍💼 Table utilisateur
-Objectifs
+### 2️⃣ Indexation avancée
 
-recherche par statut
+Types d’index utilisés :
 
-filtrage temporel
+- **B-tree**
+- **Index composites**
+- **Index partiels**
+- **Index couvrants (`INCLUDE`)**
+- **Index uniques métier**
 
-accès rapide aux utilisateurs actifs
+🎯 Objectifs :
+- Accélérer les `JOIN`
+- Optimiser les `ORDER BY`
+- Réduire les accès disque
+- Améliorer les performances analytiques
 
-Index créés
+---
 
-index B-tree sur id_user
+### 3️⃣ Partitionnement
 
-index partiel sur statut = 'actif'
+Tables partitionnées :
 
-💰 Table cryptomonnaie
-Objectifs
+| Table | Type | Clé de partition |
+|----|----|----|
+| `ordre` | RANGE | `date_creation` |
+| `trade` | RANGE | `date_execution` |
+| `audit_trail` | RANGE | `date_action` |
 
-lookup rapide par symbole
+✔ Réduction du volume scanné  
+✔ Vacuum plus efficace  
+✔ Scalabilité améliorée  
 
-affichage des cryptos actives
+---
 
-Index créés
+## 📊 Fonctions & Indicateurs de marché
 
-index B-tree sur symbole
+Fonctions PostgreSQL implémentées pour :
 
-index partiel sur statut = 'actif'
+- 📈 **VWAP** (Volume Weighted Average Price)
+- 📉 **RSI** (Relative Strength Index)
+- 📊 **Volatilité**
+- 📦 **Volumes de marché**
 
-🔁 Table paire_trading
-Objectifs
+Sources des calculs :
+- `trade` → VWAP, volumes
+- `prix_marche` → RSI, volatilité
 
-identification rapide d’une paire de trading
+---
 
-Index créés
+## 🔍 Analyses avancées SQL
 
-index composite (crypto_base, crypto_cotation)
+### ✔ Window Functions
+- Moyennes mobiles
+- Cumuls
+- Classements temporels
+- Indicateurs financiers
 
-👛 Table portefeuille
-Objectifs
+### ✔ LATERAL JOIN
+- Statistiques dépendantes par utilisateur ou par paire
+- Derniers trades par paire
 
-accès rapide aux portefeuilles utilisateur
+### ✔ DISTINCT ON
+- Dernier prix par paire
+- Dernier état d’un ordre
 
-garantir l’unicité métier
+### ✔ Recursive CTE
+- Détection de patterns suspects
+- Analyse comportementale
+- Chaînes d’ordres anormales
 
-Index créés
+---
 
-index UNIQUE composite (id_user, id_crypto)
 
-index simple sur id_user
+## ⚙️ Tuning & Monitoring
 
-📝 Table ordre
-Objectifs
+Optimisations mises en place :
 
-moteur de matching
+- 🔧 Ajustement de `work_mem` (réduction des temp file spills)
+- 🔄 Optimisation du `fillfactor` pour maximiser les HOT updates
+- 📈 Monitoring via :
+  - `pg_stat_statements`
+  - `pg_statio_user_tables`
+  - `auto_explain`
 
-suivi des ordres actifs
+🎯 Objectifs :
+- Identifier les requêtes lentes
+- Améliorer les estimations du planner
+- Surveiller la santé globale de la base
 
-historique utilisateur
+---
 
-Index créés
+## ✅ Résultats
 
-index partiel (id_paire, date_creation) WHERE statut = 'en_attente'
+- ✔ Latence réduite
+- ✔ Requêtes analytiques optimisées
+- ✔ Base scalable et maintenable
+- ✔ Architecture prête pour la production
 
-index composite (id_user, id_paire, date_creation)
+Ce projet démontre une **maîtrise avancée de PostgreSQL** :
+modélisation, indexation, partitionnement, tuning, analyse avancée et monitoring.
 
-index simple sur id_paire
+---
 
-🔄 Table trade
-Objectifs
+## 🧠 Compétences mises en œuvre
 
-suivi d’exécution des ordres
+- PostgreSQL avancé
+- Data Engineering
+- SQL analytique
+- Optimisation des performances
+- Architecture de bases de données
+- Monitoring et tuning
 
-analyse de marché par paire
+---
 
-calcul d’indicateurs
+## 👤 Auteur
 
-Index créés
-
-index composite (id_ordre, date_execution)
-
-index composite (id_paire, date_execution)
-
-📈 Table prix_marche
-Objectifs
-
-récupération du dernier prix
-
-séries temporelles
-
-Index créés
-
-index composite (id_paire, date_maj)
-
-index BRIN sur date_maj (optionnel)
-
-📊 Table statistiques_marche
-Objectifs
-
-lookup rapide des indicateurs
-
-dashboards analytiques
-
-Index créés
-
-index composite (id_paire, nom_indicateur, periode, date_maj)
-
-index couvrant incluant valeur_indicateur
-
-🚨 Table detection_anomalie
-Objectifs
-
-surveillance des ordres
-
-alertes par type
-
-Index créés
-
-index composite (id_ordre, date_detection)
-
-index composite (type, date_detection)
-
-index partiel sur anomalies critiques (optionnel)
-
-🧾 Table audit_trail
-Objectifs
-
-traçabilité complète
-
-conformité et sécurité
-
-historique par enregistrement
-
-Index créés
-
-index composite (table_cible, record_id, date_action)
-
-index composite (action, date_action)
-
-index couvrant incluant action et id_user
+**Chaimaa**  
+Data Analyst / Data Engineer  
+Projet académique & portfolio professionnel
