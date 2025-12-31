@@ -1,4 +1,5 @@
 #  CryptoTrade – PostgreSQL Advanced Optimization Project
+<img width="1536" height="1024" alt="ChatGPT Image 31 déc  2025, 22_10_14" src="https://github.com/user-attachments/assets/d12fbaed-3f21-4058-9cce-78e9a605c93e" />
 
 ##  Description du projet
 
