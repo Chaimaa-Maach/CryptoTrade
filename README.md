@@ -1,21 +1,21 @@
-# 🚀 CryptoTrade – PostgreSQL Advanced Optimization Project
+#  CryptoTrade – PostgreSQL Advanced Optimization Project
 
-## 📌 Description du projet
+##  Description du projet
 
 **CryptoTrade** est une plateforme de trading de cryptomonnaies en temps réel conçue pour gérer :
 
-- 📈 Des **millions d’ordres par jour**
-- ⚡ Un **carnet d’ordres à faible latence**
-- 💼 Des **portefeuilles multi-cryptos**
-- 🧾 Un **audit trail complet** pour la conformité
-- 📊 Des **analyses de marché avancées**
-- 🚨 La **détection d’anomalies** (wash trading, spoofing, pump & dump)
+-  Des **millions d’ordres par jour**
+-  Un **carnet d’ordres à faible latence**
+-  Des **portefeuilles multi-cryptos**
+-  Un **audit trail complet** pour la conformité
+-  Des **analyses de marché avancées**
+-  La **détection d’anomalies** (wash trading, spoofing, pump & dump)
 
 Ce projet met l’accent sur la **performance PostgreSQL**, en limitant volontairement la base à **10 tables** afin d’optimiser chaque composant en profondeur.
 
 ---
 
-## 🎯 Objectifs techniques
+##  Objectifs techniques
 
 - Gérer un **grand volume d’ordres** avec une latence minimale
 - Accélérer les **requêtes analytiques complexes**
@@ -26,7 +26,7 @@ Ce projet met l’accent sur la **performance PostgreSQL**, en limitant volontai
 
 ---
 
-## 🧱 Modélisation de la base de données
+##  Modélisation de la base de données
 
 ### Tables principales (10)
 
@@ -48,9 +48,9 @@ Ce projet met l’accent sur la **performance PostgreSQL**, en limitant volontai
 
 ---
 
-## 🛠️ Implémentation PostgreSQL
+##  Implémentation PostgreSQL
 
-### 1️⃣ Création des tables
+### 1 Création des tables
 
 - Clés primaires (`PRIMARY KEY`)
 - Contraintes métier (`CHECK`)
@@ -59,7 +59,7 @@ Ce projet met l’accent sur la **performance PostgreSQL**, en limitant volontai
 
 ---
 
-### 2️⃣ Indexation avancée
+### 2️ Indexation avancée
 
 Types d’index utilisés :
 
@@ -69,7 +69,7 @@ Types d’index utilisés :
 - **Index couvrants (`INCLUDE`)**
 - **Index uniques métier**
 
-🎯 Objectifs :
+ Objectifs :
 - Accélérer les `JOIN`
 - Optimiser les `ORDER BY`
 - Réduire les accès disque
@@ -77,7 +77,7 @@ Types d’index utilisés :
 
 ---
 
-### 3️⃣ Partitionnement
+### 3️ Partitionnement
 
 Tables partitionnées :
 
@@ -93,14 +93,14 @@ Tables partitionnées :
 
 ---
 
-## 📊 Fonctions & Indicateurs de marché
+##  Fonctions & Indicateurs de marché
 
 Fonctions PostgreSQL implémentées pour :
 
-- 📈 **VWAP** (Volume Weighted Average Price)
-- 📉 **RSI** (Relative Strength Index)
-- 📊 **Volatilité**
-- 📦 **Volumes de marché**
+-  **VWAP** (Volume Weighted Average Price)
+-  **RSI** (Relative Strength Index)
+-  **Volatilité**
+-  **Volumes de marché**
 
 Sources des calculs :
 - `trade` → VWAP, volumes
@@ -108,7 +108,7 @@ Sources des calculs :
 
 ---
 
-## 🔍 Analyses avancées SQL
+##  Analyses avancées SQL
 
 ### ✔ Window Functions
 - Moyennes mobiles
@@ -132,25 +132,25 @@ Sources des calculs :
 ---
 
 
-## ⚙️ Tuning & Monitoring
+##  Tuning & Monitoring
 
 Optimisations mises en place :
 
-- 🔧 Ajustement de `work_mem` (réduction des temp file spills)
-- 🔄 Optimisation du `fillfactor` pour maximiser les HOT updates
-- 📈 Monitoring via :
+-  Ajustement de `work_mem` (réduction des temp file spills)
+-  Optimisation du `fillfactor` pour maximiser les HOT updates
+-  Monitoring via :
   - `pg_stat_statements`
   - `pg_statio_user_tables`
   - `auto_explain`
 
-🎯 Objectifs :
+ Objectifs :
 - Identifier les requêtes lentes
 - Améliorer les estimations du planner
 - Surveiller la santé globale de la base
 
 ---
 
-## ✅ Résultats
+##  Résultats
 
 - ✔ Latence réduite
 - ✔ Requêtes analytiques optimisées
@@ -162,7 +162,7 @@ modélisation, indexation, partitionnement, tuning, analyse avancée et monitori
 
 ---
 
-## 🧠 Compétences mises en œuvre
+##  Compétences mises en œuvre
 
 - PostgreSQL avancé
 - Data Engineering
@@ -173,7 +173,7 @@ modélisation, indexation, partitionnement, tuning, analyse avancée et monitori
 
 ---
 
-## 👤 Auteur
+##  Auteur
 
 **Chaimaa**  
 Data Analyst / Data Engineer  
